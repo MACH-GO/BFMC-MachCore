@@ -12,6 +12,17 @@ find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 
+add_executable(hw_interface src/hw_interface.cpp)
+ament_target_dependencies(hw_interface sensor_msgs rclcpp std_msgs geometry_msgs)
+
+target_include_directories(hw_interface PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+target_compile_features(hw_interface PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+
+install(TARGETS hw_interface
+  DESTINATION lib/${PROJECT_NAME})
+
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights

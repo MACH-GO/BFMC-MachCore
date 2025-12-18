@@ -1,6 +1,6 @@
 # List of Packages and their functionalities
 
-## [nucleo_interface](src/nucleo_interface) 
+## [nucleo_interface](../src/nucleo_interface) 
 ### Features
 - Interfaces with the nucleo hardware
 - Handles initializing the power mode

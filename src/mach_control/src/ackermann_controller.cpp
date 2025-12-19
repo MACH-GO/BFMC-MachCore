@@ -83,10 +83,10 @@ private:
         // Publish Twist command
         twist_pub_->publish(twist_msg);
 
-        // Log at debug level
-        RCLCPP_DEBUG(this->get_logger(),
-                     "Ackermann: speed=%.2f m/s, steer=%.2f rad -> Twist: vx=%.2f, wz=%.2f",
-                     desired_speed, steering_angle, twist_msg.linear.x, twist_msg.angular.z);
+        // Log drive command
+        RCLCPP_INFO(this->get_logger(),
+                    "Ackermann: speed=%.2f m/s, steer=%.2f rad -> Twist: vx=%.2f, wz=%.2f",
+                    desired_speed, steering_angle, twist_msg.linear.x, twist_msg.angular.z);
     }
 
     // Parameters

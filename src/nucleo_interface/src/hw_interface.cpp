@@ -2,6 +2,7 @@
 #include <std_msgs/msg/string.hpp>
 #include <sensor_msgs/msg/imu.hpp>
 #include <geometry_msgs/msg/twist.hpp>
+#include <ackermann_msgs/msg/ackermann_drive_stamped.hpp>
 #include <fcntl.h>
 #include <termios.h>
 #include <unistd.h>
@@ -26,9 +27,13 @@ public:
         imu_publisher_ = this->create_publisher<sensor_msgs::msg::Imu>("imu", 10);
 
         // create subscriber
-        cmd_vel_subscriber_ = this->create_subscription<geometry_msgs::msg::Twist>(
-            "cmd_vel", 10,
-            std::bind(&SerialReaderNode::cmdVelCallback, this, std::placeholders::_1));
+        // cmd_vel_subscriber_ = this->create_subscription<geometry_msgs::msg::Twist>(
+        //     "cmd_vel", 10,
+        //     std::bind(&SerialReaderNode::cmdVelCallback, this, std::placeholders::_1));
+
+        ackermann_subscriber_ = this->create_subscription<ackermann_msgs::msg::AckermannDriveStamped>(
+            "drive_cmd", 10,
+            std::bind(&SerialReaderNode::ackermannCallback, this, std::placeholders::_1));
 
         // Open serial port
         if (!openSerial(port, baudrate))
@@ -316,10 +321,14 @@ private:
         }
     }
 
-    void cmdVelCallback(const geometry_msgs::msg::Twist::SharedPtr msg)
+    void ackermannCallback(const ackermann_msgs::msg::AckermannDriveStamped::SharedPtr msg)
     {
-        float speed = 550 * msg->linear.x;
-        float steer = -230 * msg->angular.z;
+        double v = msg->drive.speed;              // m/s
+        double delta = msg->drive.steering_angle; // rad
+
+        double speed = 550.0 * v;
+        double steer = -230.0 * delta;
+
         sendCommand("speed", {std::to_string(speed)});
         sendCommand("steer", {std::to_string(steer)});
     }
@@ -327,7 +336,7 @@ private:
     int serial_fd_;
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
     rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr imu_publisher_;
-    rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_subscriber_;
+    rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr ackermann_subscriber_;
     rclcpp::TimerBase::SharedPtr timer_;
 };
 

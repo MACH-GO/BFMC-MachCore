@@ -29,6 +29,7 @@ public:
         steer_max_units_ = this->get_parameter("steer_max_units").as_double();
         steer_max_angle_deg_ = this->get_parameter("steer_max_angle_deg").as_double();
 
+        // Steering calculations
         steer_max_angle_rad_ = steer_max_angle_deg_ * M_PI / 180.0;
         steer_units_per_rad_ = steer_max_units_ / steer_max_angle_rad_;
 
@@ -36,11 +37,7 @@ public:
         publisher_ = this->create_publisher<std_msgs::msg::String>("serial_data", 10);
         imu_publisher_ = this->create_publisher<sensor_msgs::msg::Imu>("imu", 10);
 
-        // create subscriber
-        // cmd_vel_subscriber_ = this->create_subscription<geometry_msgs::msg::Twist>(
-        //     "cmd_vel", 10,
-        //     std::bind(&SerialReaderNode::cmdVelCallback, this, std::placeholders::_1));
-
+        // Create subscriber
         ackermann_subscriber_ = this->create_subscription<ackermann_msgs::msg::AckermannDriveStamped>(
             "drive_cmd", 10,
             std::bind(&SerialReaderNode::ackermannCallback, this, std::placeholders::_1));

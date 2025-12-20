@@ -9,30 +9,40 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(ackermann_msgs REQUIRED)
-find_package(geometry_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 
 # Executables
 add_executable(ackermann_teleop_key src/ackermann_teleop_key.cpp)
+add_executable(ackermann_teleop_joy src/ackermann_teleop_joy.cpp)
 
 # Include dirs
 target_include_directories(ackermann_teleop_key PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
+target_include_directories(ackermann_teleop_joy PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+)
 
 # C++ standard
 target_compile_features(ackermann_teleop_key PUBLIC cxx_std_17)
+target_compile_features(ackermann_teleop_joy PUBLIC cxx_std_17)
 
 # Link dependencies
 ament_target_dependencies(ackermann_teleop_key
   rclcpp
   ackermann_msgs
-  geometry_msgs
+)
+ament_target_dependencies(ackermann_teleop_joy
+  rclcpp
+  ackermann_msgs
+  sensor_msgs
 )
 
 # Install
 install(TARGETS
   ackermann_teleop_key
+  ackermann_teleop_joy
   DESTINATION lib/${PROJECT_NAME}
 )
 

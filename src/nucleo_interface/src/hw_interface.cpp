@@ -17,17 +17,23 @@ public:
         // Declare parameters
         this->declare_parameter<std::string>("port", "/dev/ttyACM0");
         this->declare_parameter<int>("baudrate", 115200);
+        this->declare_parameter<int>("cmd_timeout_ds", 3);
         this->declare_parameter<double>("steer_center_units", 0.0);
         this->declare_parameter<double>("steer_max_units", 207.0);
         this->declare_parameter<double>("steer_max_angle_deg", 23.0);
+        this->declare_parameter<double>("control_rate_hz", 50.0);
+        this->declare_parameter<double>("speed_scale_units", 500.0);
 
         // Get parameters
         std::string port = this->get_parameter("port").as_string();
         int baudrate = this->get_parameter("baudrate").as_int();
+        double control_rate_hz_ = this->get_parameter("control_rate_hz").as_double();
 
+        cmd_timeout_ds = this->get_parameter("cmd_timeout_ds").as_int();
         steer_center_units_ = this->get_parameter("steer_center_units").as_double();
         steer_max_units_ = this->get_parameter("steer_max_units").as_double();
         steer_max_angle_deg_ = this->get_parameter("steer_max_angle_deg").as_double();
+        speed_scale_units = this->get_parameter("speed_scale_units").as_double();
 
         // Steering calculations
         steer_max_angle_rad_ = steer_max_angle_deg_ * M_PI / 180.0;
@@ -52,10 +58,17 @@ public:
         RCLCPP_INFO(this->get_logger(), "Serial port opened: %s at %d baud", port.c_str(), baudrate);
         sleep(5);
         sendCommand("kl", {"30"});
+
         // Create timer to read serial data
         timer_ = this->create_wall_timer(
             std::chrono::milliseconds(10),
             std::bind(&SerialReaderNode::readSerial, this));
+
+        // Create timer to send serial commands
+        const double period_s = (control_rate_hz_ > 0.0) ? (1.0 / control_rate_hz_) : 0.02;
+        control_timer_ = this->create_wall_timer(
+            std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<double>(period_s)),
+            std::bind(&SerialReaderNode::sendDriveCommand, this));
     }
 
     ~SerialReaderNode()
@@ -330,34 +343,75 @@ private:
 
     void ackermannCallback(const ackermann_msgs::msg::AckermannDriveStamped::SharedPtr msg)
     {
-        double v = msg->drive.speed;              // m/s
-        double delta = msg->drive.steering_angle; // rad
-
-        double speed = 550.0 * v;
-
-        delta = std::clamp(delta,
-                           -steer_max_angle_rad_,
-                           steer_max_angle_rad_);
-
-        double steer = steer_center_units_ - steer_units_per_rad_ * delta;
-
-        steer = std::clamp(steer,
-                           steer_center_units_ - steer_max_units_,
-                           steer_center_units_ + steer_max_units_);
-
-        sendCommand("speed", {std::to_string(speed)});
-        sendCommand("steer", {std::to_string(steer)});
+        std::lock_guard<std::mutex> lock(cmd_mutex_);
+        target_speed_mps_ = msg->drive.speed;          // m/s
+        target_steer_rad_ = msg->drive.steering_angle; // rad
+        have_cmd_ = true;
     }
 
+    void sendDriveCommand()
+    {
+        // Copy latest command thread-safely
+        double v_mps = 0.0;
+        double delta_rad = 0.0;
+        {
+            std::lock_guard<std::mutex> lock(cmd_mutex_);
+            if (!have_cmd_)
+                return;
+            v_mps = target_speed_mps_;
+            delta_rad = target_steer_rad_;
+        }
+
+        // Convert speed
+        double speed_units = speed_scale_units * v_mps;
+
+        // Clamp speed
+        speed_units = std::clamp(speed_units, -500.0, 500.0);
+
+        // Clamp steering angle
+        delta_rad = std::clamp(delta_rad, -steer_max_angle_rad_, steer_max_angle_rad_);
+
+        // Convert steering rad
+        double steer_units = steer_center_units_ - steer_units_per_rad_ * delta_rad;
+
+        // Clamp steering units
+        steer_units = std::clamp(
+            steer_units,
+            steer_center_units_ - steer_max_units_,
+            steer_center_units_ + steer_max_units_);
+
+        // Clamp timeout to sane range (avoid 0 or negative)
+        int speed_i = static_cast<int>(std::lround(speed_units));
+        int steer_i = static_cast<int>(std::lround(steer_units));
+        int timeout_ds = std::max(1, cmd_timeout_ds);
+
+        // Send ONE atomic command: speed;steer;deciseconds
+        sendCommand("vcd", {std::to_string(speed_i),
+                            std::to_string(steer_i),
+                            std::to_string(timeout_ds)});
+    }
+
+    // Member Variables
+    std::mutex cmd_mutex_;
+
     int serial_fd_;
+    int cmd_timeout_ds;
+
+    bool have_cmd_ = false;
+    double target_speed_mps_ = 0.0;
+    double target_steer_rad_ = 0.0;
+
     double steer_center_units_;
     double steer_max_units_;
     double steer_max_angle_deg_;
     double steer_max_angle_rad_;
     double steer_units_per_rad_;
+    double speed_scale_units;
+
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
     rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr imu_publisher_;
     rclcpp::Subscription<ackermann_msgs::msg::AckermannDriveStamped>::SharedPtr ackermann_subscriber_;
+    rclcpp::TimerBase::SharedPtr control_timer_;
     rclcpp::TimerBase::SharedPtr timer_;
 };
 

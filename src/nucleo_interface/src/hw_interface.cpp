@@ -2,6 +2,7 @@
 #include <std_msgs/msg/string.hpp>
 #include <sensor_msgs/msg/imu.hpp>
 #include <geometry_msgs/msg/twist.hpp>
+#include <ackermann_msgs/msg/ackermann_drive_stamped.hpp>
 #include <fcntl.h>
 #include <termios.h>
 #include <unistd.h>
@@ -16,19 +17,30 @@ public:
         // Declare parameters
         this->declare_parameter<std::string>("port", "/dev/ttyACM0");
         this->declare_parameter<int>("baudrate", 115200);
+        this->declare_parameter<double>("steer_center_units", 0.0);
+        this->declare_parameter<double>("steer_max_units", 207.0);
+        this->declare_parameter<double>("steer_max_angle_deg", 23.0);
 
         // Get parameters
         std::string port = this->get_parameter("port").as_string();
         int baudrate = this->get_parameter("baudrate").as_int();
 
+        steer_center_units_ = this->get_parameter("steer_center_units").as_double();
+        steer_max_units_ = this->get_parameter("steer_max_units").as_double();
+        steer_max_angle_deg_ = this->get_parameter("steer_max_angle_deg").as_double();
+
+        // Steering calculations
+        steer_max_angle_rad_ = steer_max_angle_deg_ * M_PI / 180.0;
+        steer_units_per_rad_ = steer_max_units_ / steer_max_angle_rad_;
+
         // Create publisher
         publisher_ = this->create_publisher<std_msgs::msg::String>("serial_data", 10);
         imu_publisher_ = this->create_publisher<sensor_msgs::msg::Imu>("imu", 10);
 
-        // create subscriber
-        cmd_vel_subscriber_ = this->create_subscription<geometry_msgs::msg::Twist>(
-            "cmd_vel", 10,
-            std::bind(&SerialReaderNode::cmdVelCallback, this, std::placeholders::_1));
+        // Create subscriber
+        ackermann_subscriber_ = this->create_subscription<ackermann_msgs::msg::AckermannDriveStamped>(
+            "drive_cmd", 10,
+            std::bind(&SerialReaderNode::ackermannCallback, this, std::placeholders::_1));
 
         // Open serial port
         if (!openSerial(port, baudrate))
@@ -316,18 +328,36 @@ private:
         }
     }
 
-    void cmdVelCallback(const geometry_msgs::msg::Twist::SharedPtr msg)
+    void ackermannCallback(const ackermann_msgs::msg::AckermannDriveStamped::SharedPtr msg)
     {
-        float speed = 550 * msg->linear.x;
-        float steer = -230 * msg->angular.z;
+        double v = msg->drive.speed;              // m/s
+        double delta = msg->drive.steering_angle; // rad
+
+        double speed = 550.0 * v;
+
+        delta = std::clamp(delta,
+                           -steer_max_angle_rad_,
+                           steer_max_angle_rad_);
+
+        double steer = steer_center_units_ - steer_units_per_rad_ * delta;
+
+        steer = std::clamp(steer,
+                           steer_center_units_ - steer_max_units_,
+                           steer_center_units_ + steer_max_units_);
+
         sendCommand("speed", {std::to_string(speed)});
         sendCommand("steer", {std::to_string(steer)});
     }
 
     int serial_fd_;
+    double steer_center_units_;
+    double steer_max_units_;
+    double steer_max_angle_deg_;
+    double steer_max_angle_rad_;
+    double steer_units_per_rad_;
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
     rclcpp::Publisher<sensor_msgs::msg::Imu>::SharedPtr imu_publisher_;
-    rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_subscriber_;
+    rclcpp::Subscription<ackermann_msgs::msg::AckermannDriveStamped>::SharedPtr ackermann_subscriber_;
     rclcpp::TimerBase::SharedPtr timer_;
 };
 

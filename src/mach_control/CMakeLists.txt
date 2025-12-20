@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(nucleo_interface)
+project(mach_control)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -8,30 +8,31 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(std_msgs REQUIRED)
-find_package(sensor_msgs REQUIRED)
-find_package(geometry_msgs REQUIRED)
 find_package(ackermann_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
 
-add_executable(hw_interface src/hw_interface.cpp)
+# Executables
+add_executable(ackermann_teleop_key src/ackermann_teleop_key.cpp)
 
-target_include_directories(hw_interface PUBLIC
+# Include dirs
+target_include_directories(ackermann_teleop_key PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
 
-target_compile_features(hw_interface PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+# C++ standard
+target_compile_features(ackermann_teleop_key PUBLIC cxx_std_17)
 
-ament_target_dependencies(hw_interface
- sensor_msgs 
- rclcpp 
- std_msgs 
- geometry_msgs
- ackermann_msgs
+# Link dependencies
+ament_target_dependencies(ackermann_teleop_key
+  rclcpp
+  ackermann_msgs
+  geometry_msgs
 )
 
-install(TARGETS 
-  hw_interface
+# Install
+install(TARGETS
+  ackermann_teleop_key
   DESTINATION lib/${PROJECT_NAME}
 )
 

@@ -4,11 +4,11 @@ This repository is the central software stack for MACH::GO autonomous vehicle, d
 
 ## System Architecture
 
-(To be updated)
+![Architecture](./monitoring/Architecture.png)
 
-## Repository Structure
+## Documentation
 
-(To be updated)
+Please refer to [ROS_Documentation.md](docs/ROS_Documentation.md) for information on packages, nodes and topics.
 
 ## Contributing
 

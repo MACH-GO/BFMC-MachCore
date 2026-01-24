@@ -1,0 +1,38 @@
+cmake_minimum_required(VERSION 3.8)
+project(mach_hardware)
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+# find dependencies
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(ackermann_msgs REQUIRED)
+
+add_executable(nucleo_interface src/nucleo_interface.cpp)
+
+target_include_directories(nucleo_interface PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
+target_compile_features(nucleo_interface PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+
+ament_target_dependencies(nucleo_interface
+ sensor_msgs 
+ rclcpp 
+ std_msgs 
+ geometry_msgs
+ ackermann_msgs
+)
+
+install(TARGETS 
+  nucleo_interface
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+ament_package()

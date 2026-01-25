@@ -7,10 +7,11 @@ from launch.substitutions import Command
 
 def generate_launch_description():
     pkg_share = get_package_share_directory('mach_simulator')
+    description_pkg = get_package_share_directory('mach_description')
     gazebo_assets_share = get_package_share_directory('gazebo_assets')
 
     urdf_path = os.path.join(
-        pkg_share,
+        description_pkg,
         'urdf',
         'bfmc_car.urdf.xacro'
     )
@@ -47,11 +48,13 @@ def generate_launch_description():
     gazebo = ExecuteProcess(
         cmd=[
             'bash', '-lc',
-            'source /usr/share/gazebo/setup.sh && ' # sources gazebo before launching
-            'gazebo --verbose -s libgazebo_ros_init.so -s libgazebo_ros_factory.so'.format(world_path)
+            f'source /usr/share/gazebo/setup.sh && '
+            f'gazebo --verbose "{world_path}" '
+            f'-s libgazebo_ros_init.so -s libgazebo_ros_factory.so'
         ],
         output='screen'
     )
+
 
     # ---- Spawn Robot ----
     spawn_car = Node(
@@ -97,7 +100,7 @@ def generate_launch_description():
         package='rviz2',
         executable='rviz2',
         name='rviz2',
-        arguments=['-d', rviz_config_path],
+        # arguments=['-d', rviz_config_path],
         parameters=[{'use_sim_time': True}],
         output='screen'
     )

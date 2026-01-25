@@ -1,38 +1,38 @@
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import ExecuteProcess
+from launch.actions import ExecuteProcess, SetEnvironmentVariable
 from launch_ros.actions import Node
 from launch.substitutions import Command
 
 def generate_launch_description():
-    
-    # ---- Paths ----
     pkg_share = get_package_share_directory('mach_simulator')
+    gazebo_assets_share = get_package_share_directory('gazebo_assets')
 
-    # Ensure this points to the correct location in the INSTALL folder
     urdf_path = os.path.join(
         pkg_share,
         'urdf',
         'bfmc_car.urdf.xacro'
     )
 
-    gazebo_assets_share = get_package_share_directory('gazebo_assets')
     world_path = os.path.join(
         gazebo_assets_share,
         'worlds',
         'world.world'
     )
 
-     # ---- RViz ----
     rviz_config_path = os.path.join(
         pkg_share,
-        'rviz',
+        'config',
         'bfmc_sim.rviz'
     )
 
+    set_model_path = SetEnvironmentVariable(
+        name='GAZEBO_MODEL_PATH',
+        value=os.path.join(gazebo_assets_share, 'models')
+    )
+
     # ---- Robot State Publisher ----
-    # This runs xacro and publishes the 'robot_description' topic
     robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -46,17 +46,14 @@ def generate_launch_description():
     # ---- Gazebo ----
     gazebo = ExecuteProcess(
         cmd=[
-            'gazebo',
-            '--verbose',
-            world_path,
-            '-s', 'libgazebo_ros_init.so',
-            '-s', 'libgazebo_ros_factory.so'
+            'bash', '-lc',
+            'source /usr/share/gazebo/setup.sh && ' # sources gazebo before launching
+            'gazebo --verbose -s libgazebo_ros_init.so -s libgazebo_ros_factory.so'.format(world_path)
         ],
         output='screen'
     )
 
     # ---- Spawn Robot ----
-    # Reads 'robot_description' topic and spawns the model
     spawn_car = Node(
         package='gazebo_ros',
         executable='spawn_entity.py',
@@ -106,6 +103,7 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
+        set_model_path,
         robot_state_publisher,
         gazebo,
         spawn_car,

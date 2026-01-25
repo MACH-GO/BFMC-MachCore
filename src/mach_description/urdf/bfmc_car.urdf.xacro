@@ -327,26 +327,15 @@
     <!-- Rear wheels -->
     <joint name="rear_left_wheel_joint">
       <command_interface name="velocity"/>
+      <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
 
     <joint name="rear_right_wheel_joint">
       <command_interface name="velocity"/>
-      <state_interface name="velocity"/>
-    </joint>
-
-<!--Added for testing-->
-<!--
-    <joint name="front_left_wheel_joint">
-      <state_interface name="velocity"/>
       <state_interface name="position"/>
-    </joint>
-
-    <joint name="front_right_wheel_joint">
       <state_interface name="velocity"/>
-      <state_interface name="position"/>
     </joint>
--->
 
     <joint name="front_left_wheel_joint">
       <command_interface name="position"/>

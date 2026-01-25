@@ -369,7 +369,7 @@
 
       <plugin name="gazebo_ros_camera_left" filename="libgazebo_ros_camera.so">
         <ros>
-          <namespace>/camera/left</namespace>
+          <namespace>/camera</namespace>
         </ros>
         <camera_name>left</camera_name>
         <image_topic_name>image_raw</image_topic_name>
@@ -398,7 +398,7 @@
 
       <plugin name="gazebo_ros_camera_right" filename="libgazebo_ros_camera.so">
         <ros>
-          <namespace>/camera/right</namespace>
+          <namespace>/camera</namespace>
         </ros>
         <camera_name>right</camera_name>
         <image_topic_name>image_raw</image_topic_name>

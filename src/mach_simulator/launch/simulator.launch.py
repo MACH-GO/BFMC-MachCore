@@ -23,8 +23,8 @@ def generate_launch_description():
     )
 
     rviz_config_path = os.path.join(
-        pkg_share,
-        'config',
+        description_pkg,
+        'rviz',
         'bfmc_sim.rviz'
     )
 
@@ -63,9 +63,10 @@ def generate_launch_description():
         arguments=[
             '-entity', 'bfmc_car',
             '-topic', 'robot_description',
-            '-x', '0.0',
-            '-y', '0.0',
-            '-z', '0.1'
+            '-x', '1.67',
+            '-y', '-6.57',
+            '-z', '0.1',
+            '-Y', '-0.08'
         ],
         output='screen'
     )
@@ -100,7 +101,7 @@ def generate_launch_description():
         package='rviz2',
         executable='rviz2',
         name='rviz2',
-        # arguments=['-d', rviz_config_path],
+        arguments=['-d', rviz_config_path],
         parameters=[{'use_sim_time': True}],
         output='screen'
     )

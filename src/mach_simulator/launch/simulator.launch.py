@@ -8,7 +8,6 @@ from launch.substitutions import Command
 def generate_launch_description():
     pkg_share = get_package_share_directory('mach_simulator')
     description_pkg = get_package_share_directory('mach_description')
-    gazebo_assets_share = get_package_share_directory('gazebo_assets')
 
     urdf_path = os.path.join(
         description_pkg,
@@ -17,7 +16,7 @@ def generate_launch_description():
     )
 
     world_path = os.path.join(
-        gazebo_assets_share,
+        pkg_share,
         'worlds',
         'world.world'
     )
@@ -30,7 +29,7 @@ def generate_launch_description():
 
     set_model_path = SetEnvironmentVariable(
         name='GAZEBO_MODEL_PATH',
-        value=os.path.join(gazebo_assets_share, 'models')
+        value=os.path.join(pkg_share, 'models')
     )
 
     # ---- Robot State Publisher ----

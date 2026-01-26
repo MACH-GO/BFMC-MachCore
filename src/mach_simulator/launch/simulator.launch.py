@@ -126,5 +126,5 @@ def generate_launch_description():
         ackermann_controller,
         cmd_vel_relay,
         ackermann_to_twist,
-        rviz
+        # rviz
     ])

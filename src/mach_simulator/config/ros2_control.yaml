@@ -12,19 +12,12 @@ controller_manager:
 ackermann_controller:
   ros__parameters:
     # ---- INPUT ----
-    cmd_vel_topic: /cmd_vel
-    use_stamped_vel: false
-    cmd_vel_timeout: 0.5
-    open_loop: false
+    use_stamped_vel: true
 
     # ---- JOINTS ----
     rear_wheels_names:
       - rear_left_wheel_joint
       - rear_right_wheel_joint
-
-    # front_wheels_names:
-    #   - front_left_wheel_joint
-    #   - front_right_wheel_joint
 
     front_wheels_names:
       - front_left_steering_joint

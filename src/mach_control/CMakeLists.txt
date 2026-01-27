@@ -14,19 +14,17 @@ find_package(sensor_msgs REQUIRED)
 # Executables
 add_executable(ackermann_teleop_key src/ackermann_teleop_key.cpp)
 add_executable(ackermann_teleop_joy src/ackermann_teleop_joy.cpp)
+add_executable(lane_follower_pid src/lane_follower_pid.cpp)
+add_executable(lane_points_test src/lane_points_test.cpp)
 
 # Include dirs
-target_include_directories(ackermann_teleop_key PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-)
-target_include_directories(ackermann_teleop_joy PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-)
-
-# C++ standard
-target_compile_features(ackermann_teleop_key PUBLIC cxx_std_17)
-target_compile_features(ackermann_teleop_joy PUBLIC cxx_std_17)
+# target_include_directories(ackermann_teleop_key PUBLIC
+#   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+#   $<INSTALL_INTERFACE:include>
+# )
+# target_include_directories(ackermann_teleop_joy PUBLIC
+#   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+# )
 
 # Link dependencies
 ament_target_dependencies(ackermann_teleop_key
@@ -38,24 +36,23 @@ ament_target_dependencies(ackermann_teleop_joy
   ackermann_msgs
   sensor_msgs
 )
+ament_target_dependencies(lane_follower_pid
+  rclcpp
+  ackermann_msgs
+  std_msgs
+)
+ament_target_dependencies(lane_points_test
+  rclcpp
+  std_msgs
+)
 
 # Install
 install(TARGETS
   ackermann_teleop_key
   ackermann_teleop_joy
+  lane_follower_pid
+  lane_points_test
   DESTINATION lib/${PROJECT_NAME}
 )
-
-if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  # the following line skips the linter which checks for copyrights
-  # comment the line when a copyright and license is added to all source files
-  set(ament_cmake_copyright_FOUND TRUE)
-  # the following line skips cpplint (only works in a git repo)
-  # comment the line when this package is in a git repo and when
-  # a copyright and license is added to all source files
-  set(ament_cmake_cpplint_FOUND TRUE)
-  ament_lint_auto_find_test_dependencies()
-endif()
 
 ament_package()

@@ -85,13 +85,25 @@ def generate_launch_description():
         output='screen'
     )
 
-    cmd_vel_relay = Node(
-        package='topic_tools',
-        executable='relay',
-        arguments=[
-            '/cmd_vel',
-            '/ackermann_controller/reference_unstamped'
-        ],
+    # cmd_vel_relay = Node(
+    #     package='topic_tools',
+    #     executable='relay',
+    #     arguments=[
+    #         '/cmd_vel',
+    #         '/ackermann_controller/reference'
+    #     ],
+    #     output='screen'
+    # )
+
+    ackermann_to_twist = Node(
+        package='mach_simulator',
+        executable='ackermann_to_twist',
+        name='ackermann_to_twist',
+        parameters=[{
+            'wheelbase': 0.255,
+            'input_topic': '/drive_cmd',
+            'output_topic': '/ackermann_controller/reference',
+        }],
         output='screen'
     )
 
@@ -112,6 +124,7 @@ def generate_launch_description():
         spawn_car,
         joint_state_broadcaster,
         ackermann_controller,
-        cmd_vel_relay,
-        rviz
+        # cmd_vel_relay,
+        ackermann_to_twist,
+        # rviz
     ])

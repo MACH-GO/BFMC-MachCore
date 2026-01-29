@@ -22,7 +22,7 @@ public:
         kd_ = this->declare_parameter<double>("kd", 0.15);
 
         // Input scaling (use -1.0 if sign is flipped)
-        input_scale_ = this->declare_parameter<double>("input_scale", 1.0);
+        input_scale_ = this->declare_parameter<double>("input_scale", -1.0);
 
         // Integral clamp (anti-windup)
         i_max_ = this->declare_parameter<double>("i_max", 0.5);
@@ -31,10 +31,10 @@ public:
         steer_max_rad_ = this->declare_parameter<double>("steer_max_rad", 0.4);
         steer_rate_limit_rad_s_ = this->declare_parameter<double>("steer_rate_limit_rad_s", 2.0);
 
-        // Speed scheduling
-        speed_base_ = this->declare_parameter<double>("speed_base", 1.5);               // m/s
-        speed_min_ = this->declare_parameter<double>("speed_min", 0.6);                 // m/s
-        speed_steer_scale_ = this->declare_parameter<double>("speed_steer_scale", 1.2); // slow down more on turns
+        // Speed
+        speed_base_ = this->declare_parameter<double>("speed_base", 0.4);               // m/s
+        speed_min_ = this->declare_parameter<double>("speed_min", 0.2);                 // m/s
+        speed_steer_scale_ = this->declare_parameter<double>("speed_steer_scale", 1.5); // slow down more on turns
 
         // Timeout for commands
         cmd_timeout_s_ = this->declare_parameter<double>("cmd_timeout_s", 0.5);

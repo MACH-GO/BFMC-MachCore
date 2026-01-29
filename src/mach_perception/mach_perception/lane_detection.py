@@ -33,6 +33,7 @@ class LaneDetectionNode(Node):
         # lane_w_max_px = 1.4 * lane_width
         self.declare_parameter("lane_w_min_px", 240)
         self.declare_parameter("lane_w_max_px", 560)
+        self.declare_parameter("lane_center_bias", 0.0)
 
         # Search tolerance around expected left/right in locked mode
         self.declare_parameter("edge_tol_frac", 0.4)
@@ -250,6 +251,7 @@ class LaneDetectionNode(Node):
 
         lane_w_min_px = int(self.get_parameter("lane_w_min_px").value)
         lane_w_max_px = int(self.get_parameter("lane_w_max_px").value)
+        lane_center_bias = float(self.get_parameter("lane_center_bias").value)
         edge_tol_frac = float(self.get_parameter("edge_tol_frac").value)
 
         publish_normalized = bool(self.get_parameter("publish_normalized").value)
@@ -346,6 +348,9 @@ class LaneDetectionNode(Node):
             offset_out = float(offset_px / denom)  # ~[-1, 1]
         else:
             offset_out = float(offset_px)
+
+        self.get_logger().info(f"lane_center_bias={lane_center_bias:.6f} raw_norm={offset_out:.6f}")    
+        offset_out = offset_out - lane_center_bias
 
         # Confidence: ratio of valid scan rows
         h_roi = binary.shape[0]

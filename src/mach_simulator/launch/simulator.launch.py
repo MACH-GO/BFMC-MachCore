@@ -18,7 +18,7 @@ def generate_launch_description():
     world_path = os.path.join(
         pkg_share,
         'worlds',
-        'world.world'
+        'full-track.world'
     )
 
     rviz_config_path = os.path.join(
@@ -85,16 +85,6 @@ def generate_launch_description():
         output='screen'
     )
 
-    # cmd_vel_relay = Node(
-    #     package='topic_tools',
-    #     executable='relay',
-    #     arguments=[
-    #         '/cmd_vel',
-    #         '/ackermann_controller/reference'
-    #     ],
-    #     output='screen'
-    # )
-
     ackermann_to_twist = Node(
         package='mach_simulator',
         executable='ackermann_to_twist',
@@ -124,7 +114,6 @@ def generate_launch_description():
         spawn_car,
         joint_state_broadcaster,
         ackermann_controller,
-        # cmd_vel_relay,
         ackermann_to_twist,
         # rviz
     ])

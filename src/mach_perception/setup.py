@@ -25,6 +25,7 @@ setup(
     entry_points={
         'console_scripts': [
             'lane_detection = mach_perception.lane_detection:main',
+            'depth_visualizer = mach_perception.depth_visualizer:main',
         ],
     },
 )

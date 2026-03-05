@@ -1,0 +1,111 @@
+<?xml version="1.0"?> 
+<sdf version="1.6">
+  <world name="bfmc_official">
+    <gravity>0 0 -9.8</gravity>
+
+    <!-- ================= LIGHTING ================= -->
+    <light name='c1' type='point'>
+      <pose>0 0 2 0 0 0</pose>
+      <diffuse>125 125 125 125</diffuse>
+      <specular>50 50 50 50</specular>
+      <attenuation><range>20</range><constant>0.3</constant></attenuation>
+      <cast_shadows>0</cast_shadows>
+    </light>
+    <light name='c2' type='point'>
+      <pose>15 0 2 0 0 0</pose>
+      <diffuse>125 125 125 125</diffuse>
+      <specular>50 50 50 50</specular>
+      <attenuation><range>20</range><constant>0.3</constant></attenuation>
+      <cast_shadows>0</cast_shadows>
+    </light>
+    <light name='c3' type='point'>
+      <pose>0 -15 2 0 0 0</pose>
+      <diffuse>125 125 125 125</diffuse>
+      <specular>50 50 50 50</specular>
+      <attenuation><range>20</range><constant>0.3</constant></attenuation>
+      <cast_shadows>0</cast_shadows>
+    </light>
+    <light name='c4' type='point'>
+      <pose>15 -15 2 0 0 0</pose>
+      <diffuse>125 125 125 125</diffuse>
+      <specular>50 50 50 50</specular>
+      <attenuation><range>50</range><constant>0.3</constant></attenuation>
+      <cast_shadows>0</cast_shadows>
+    </light>
+
+    <!-- ================= MAP ================= -->
+    <include>
+      <uri>model://track</uri>
+      <name>track</name>
+      <pose>7.34 -7.495 0 0 0 0</pose>
+    </include>
+
+    <!-- ================= OBJECTS & SIGNS ================= -->
+    <include><uri>model://enter_highway_sign</uri><name>EHIGH_T</name><pose>5.871 -13.970 0.079 0 0 3.141592</pose></include>
+    <include><uri>model://enter_highway_sign</uri><name>EHIGH_Y</name><pose>9.412 -4.850 0.079 0 0 1.570796</pose></include>
+
+    <include><uri>model://leave_highway_sign</uri><name>LHIGH_U</name><pose>10.686 -6.276 0.079 0 0 4.712388</pose></include>
+    <include><uri>model://leave_highway_sign</uri><name>LHIGH_Z</name><pose>6.520 -12.700 0.079 0 0 0</pose></include>
+    <include><uri>model://leave_highway_sign</uri><name>LHIGH_H</name><pose>8.458 -14.359 0.079 0 0 -3.15</pose></include>
+
+    <include><uri>model://prohibited_sign</uri><name>DENY_V</name><pose>3.323 -7.581 0.079 0 0 4.712388</pose></include>
+    <include><uri>model://prohibited_sign</uri><name>DENY_X</name><pose>2.387 -7.581 0.079 0 0 4.712388</pose></include>
+    <include><uri>model://prohibited_sign</uri><name>DENY_G</name><pose>11.578 -4.504 0.079 0 0 4.712388</pose></include>
+
+    <include><uri>model://oneway_sign</uri><name>ONEWAY_J</name><pose>3.341 -9.821 0.079 0 0 1.570796</pose></include>
+    <include><uri>model://oneway_sign</uri><name>ONEWAY_B</name><pose>2.406 -9.821 0.079 0 0 1.570796</pose></include>
+    <include><uri>model://oneway_sign</uri><name>ONEWAY_E</name><pose>9.196 -14.375 0.079 0 0 0</pose></include>
+
+    <include><uri>model://parking_sign</uri><name>PRK_P1</name><pose>4.047 -2.358 0.079 0 0 0</pose></include>
+    <include><uri>model://parking_sign</uri><name>PRK_P2</name><pose>2.857 -2.358 0.079 0 0 0</pose></include>
+    <include><uri>model://parking_sign</uri><name>PRK_P3</name><pose>2.779 -1.452 0.079 0 0 3.141592</pose></include>
+    <include><uri>model://parking_sign</uri><name>PRK_P4</name><pose>4.459 -1.452 0.079 0 0 3.141592</pose></include>
+
+    <include><uri>model://crosswalk_sign</uri><name>CWALK_K</name><pose>7.312 -3.240 0.079 0 0 3.141592</pose></include>
+    <include><uri>model://crosswalk_sign</uri><name>CWALK_L</name><pose>6.627 -4.181 0.079 0 0 0</pose></include>
+    <include><uri>model://crosswalk_sign</uri><name>CWALK_M</name><pose>6.777 -1.456 0.079 0 0 3.141592</pose></include>
+    <include><uri>model://crosswalk_sign</uri><name>CWALK_N</name><pose>6.130 -2.342 0.079 0 0 0</pose></include>
+    <include><uri>model://crosswalk_sign</uri><name>CWALK_O</name><pose>1.109 -12.486 0.079 0 0 1.570796</pose></include>
+    <include><uri>model://crosswalk_sign</uri><name>CWALK_P</name><pose>0.195 -11.869 0.079 0 0 4.712388</pose></include>
+
+    <include><uri>model://priority_sign</uri><name>PRIOR_D</name><pose>3.675 -13.050 0.079 0 0 3.141592</pose></include>
+    <include><uri>model://priority_sign</uri><name>PRIOR_F</name><pose>0.204 -6.031 0.079 0 0 4.712388</pose></include>
+    <include><uri>model://priority_sign</uri><name>PRIOR_H</name><pose>5.544 -11.381 0.079 0 0 1.570796</pose></include>
+    <include><uri>model://priority_sign</uri><name>PRIOR_I</name><pose>4.589 -5.997 0.079 0 0 4.712388</pose></include>
+
+    <include><uri>model://roundabout_sign</uri><name>GIR_Q</name><pose>8.766 -4.179 0.079 0 0 0</pose></include>
+    <include><uri>model://roundabout_sign</uri><name>GIR_R</name><pose>10.320 -4.869 0.079 0 0 1.570796</pose></include>
+    <include><uri>model://roundabout_sign</uri><name>GIR_S</name><pose>11.015 -3.297 0.079 0 0 3.141592</pose></include>
+
+    <include><uri>model://stop_sign</uri><name>STOP_A</name><pose>2.103 -14.004 0.079 0 0 0</pose></include>
+    <include><uri>model://stop_sign</uri><name>STOP_C</name><pose>4.272 -11.153 0.079 0 0 3.141592</pose></include>
+    <include><uri>model://stop_sign</uri><name>STOP_E</name><pose>0.217 -9.870 0.079 0 0 4.712388</pose></include>
+    <include><uri>model://stop_sign</uri><name>STOP_G</name><pose>1.129 -7.602 0.079 0 0 1.570796</pose></include>
+    <include><uri>model://stop_sign</uri><name>STOP_W</name><pose>12.603 -4.515 0.079 0 0 1.570796</pose></include>
+    <include><uri>model://stop_sign</uri><name>STOP_H</name><pose>4.327 -14.023 0.079 0 0 0</pose></include>
+    <include><uri>model://stop_sign</uri><name>STOP_F</name><pose>4.298 -7.342 0.079 0 0 0</pose></include>
+    <include><uri>model://stop_sign</uri><name>STOP_I</name><pose>1.423 -6.287 0.079 0 0 3.141592</pose></include>
+
+    <!-- ================= OBSTACLES ================= -->
+    <!-- <include><uri>model://pedestrian_object</uri><name>PED_OBJ_KL</name><pose>6.427 -1.422 0 0 0 3.141591</pose></include> -->
+    <!-- <include><uri>model://pedestrian_object</uri><name>PED_OBJ_MN</name><pose>1.998 -6.320 0 0 0 3.141591</pose></include> -->
+    <!-- <include><uri>model://pedestrian_object</uri><name>PED_OBJ_AD_H</name><pose>0.172 -12.200 0 0 0 4.712391</pose></include> -->
+
+    <!-- <include><uri>model://rcCar_assembly_obstacle</uri><name>obstacle_rcCar_1</name><pose>3.703 -2.580 0.033 0 0 1.567</pose></include> -->
+    <!-- <include><uri>model://rcCar_assembly_obstacle</uri><name>obstacle_rcCar_2</name><pose>3.999 -1.376 0.033 0 0 3.137</pose></include> -->
+    <!-- <include><uri>model://rcCar_assembly_obstacle</uri><name>obstacle_rcCar_3</name><pose>8.140 -2.096 0.033 0 0 0</pose></include> -->
+    <!-- <include><uri>model://rcCar_assembly_obstacle</uri><name>obstacle_rcCar_4</name><pose>9.607 -1.713 0.033 0 0 3.137</pose></include> -->
+    <!-- <include><uri>model://rcCar_assembly_obstacle</uri><name>obstacle_rcCar_5</name><pose>9.503 -8.615 0.033 0 0 -1.306</pose></include> -->
+    <!-- <include><uri>model://rcCar_assembly_obstacle</uri><name>obstacle_rcCar_6</name><pose>11.108 -10.675 0.033 0 0 1.523</pose></include> -->
+
+    <!-- <include><uri>model://ramp</uri><name>RAMP</name><pose>0.651 -4.561 0 0 0 1.569</pose></include> -->
+    <!-- <include><uri>model://roadblock</uri><name>roadblock</name><pose>2.682 -8.697 0 0 0 1.569</pose></include> -->
+
+    <!-- ================= TRAFFIC LIGHTS ================= -->
+    <!-- <include><uri>model://traffic_light</uri><name>start</name><pose>1.132 -14.403 0 0 0 4.712388</pose></include> -->
+    <!-- <include><uri>model://traffic_light</uri><name>master</name><pose>2.030 -11.132 0 0 0 3.141592</pose></include> -->
+    <!-- <include><uri>model://traffic_light</uri><name>slave</name><pose>3.744 -10.140 0 0 0 0</pose></include> -->
+    <!-- <include><uri>model://traffic_light</uri><name>antimaster</name><pose>3.347 -11.483 0 0 0 4.712388</pose></include> -->
+
+  </world>
+</sdf>

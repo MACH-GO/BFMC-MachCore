@@ -1,13 +1,15 @@
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import ExecuteProcess, SetEnvironmentVariable
-from launch_ros.actions import Node
+from launch.actions import ExecuteProcess, SetEnvironmentVariable, IncludeLaunchDescription, GroupAction
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch_ros.actions import Node, PushRosNamespace
 from launch.substitutions import Command
 
 def generate_launch_description():
     pkg_share = get_package_share_directory('mach_simulator')
     description_pkg = get_package_share_directory('mach_description')
+    stereo_pkg = get_package_share_directory('stereo_image_proc')
 
     urdf_path = os.path.join(
         description_pkg,
@@ -18,7 +20,7 @@ def generate_launch_description():
     world_path = os.path.join(
         pkg_share,
         'worlds',
-        'world.world'
+        'full-track.world'
     )
 
     rviz_config_path = os.path.join(
@@ -85,16 +87,6 @@ def generate_launch_description():
         output='screen'
     )
 
-    # cmd_vel_relay = Node(
-    #     package='topic_tools',
-    #     executable='relay',
-    #     arguments=[
-    #         '/cmd_vel',
-    #         '/ackermann_controller/reference'
-    #     ],
-    #     output='screen'
-    # )
-
     ackermann_to_twist = Node(
         package='mach_simulator',
         executable='ackermann_to_twist',
@@ -105,6 +97,26 @@ def generate_launch_description():
             'output_topic': '/ackermann_controller/reference',
         }],
         output='screen'
+    )
+
+    # ---- Stereo Node ----
+    stereo_vision = GroupAction(
+        actions=[
+            PushRosNamespace('camera'),
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(
+                    os.path.join(stereo_pkg, 'launch', 'stereo_image_proc.launch.py')
+                ),
+                launch_arguments={
+                    'approximate_sync': 'True',
+                    'left_namespace': 'left',
+                    'right_namespace': 'right',
+                    'disparity_range': '64',
+                    'speckle_size': '0',
+                    'texture_threshold': '2000',
+                }.items()
+            )
+        ]
     )
 
     # ---- RViz Node ----
@@ -124,7 +136,7 @@ def generate_launch_description():
         spawn_car,
         joint_state_broadcaster,
         ackermann_controller,
-        # cmd_vel_relay,
         ackermann_to_twist,
+        # stereo_vision,
         # rviz
     ])

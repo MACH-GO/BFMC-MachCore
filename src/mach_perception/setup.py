@@ -1,4 +1,6 @@
 from setuptools import find_packages, setup
+import os
+from glob import glob
 
 package_name = 'mach_perception'
 
@@ -10,6 +12,7 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        (os.path.join('share', package_name, 'model'), glob('model/*.onnx')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -26,6 +29,7 @@ setup(
         'console_scripts': [
             'lane_detection = mach_perception.lane_detection:main',
             'depth_visualizer = mach_perception.depth_visualizer:main',
+            'sim_inference = mach_perception.sim_inference:main'
         ],
     },
 )

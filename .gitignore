@@ -27,3 +27,4 @@ __pycache__/
 .env
 .env.default
 
+src/mach_perception/model/best.onnx

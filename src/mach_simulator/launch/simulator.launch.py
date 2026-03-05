@@ -137,6 +137,6 @@ def generate_launch_description():
         joint_state_broadcaster,
         ackermann_controller,
         ackermann_to_twist,
-        stereo_vision,
+        # stereo_vision,
         # rviz
     ])
